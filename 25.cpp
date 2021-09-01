@@ -27,6 +27,7 @@ ListNode* reverseKGroup(ListNode* head, int k) {
     {
         int count = 0;
         temp = iter;
+        auto shit = iter;
         while (temp && count < k - 1)
         {
             temp = temp->next;
@@ -43,24 +44,7 @@ ListNode* reverseKGroup(ListNode* head, int k) {
             temp = iter;
             iter = temp_s;
         }
-        last = temp->next;
+        last = shit;
     }
     return dummy_node->next;
-}
-
-int main()
-{
-    auto *head = new ListNode(1);
-    auto record = head;
-    head->next = new ListNode(2);
-    head = head->next;
-    head->next = new ListNode(3);
-    head = head->next;
-    head->next = new ListNode(4);
-    head = head->next;
-    head->next = new ListNode(5);
-	head = head->next;
-	head->next = new ListNode(6);
-    record = reverseKGroup(record, 3);
-    return 0;
 }
