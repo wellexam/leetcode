@@ -17,6 +17,8 @@ struct TreeNode
 
 void recursive(int first, int last, TreeNode *node, bool left_or_right, vector<int> &nums)
 {
+    if (first > last)
+        return;
     if (first == last)
     {
         if (left_or_right)
