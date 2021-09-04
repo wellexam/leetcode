@@ -1,13 +1,12 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <iostream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
-class slide
-{
+class slide {
 public:
     int begin = 9;
     char store[10] = {};
@@ -16,8 +15,7 @@ public:
     string &add(char);
 };
 
-string &slide::add(char c)
-{
+string &slide::add(char c) {
     store[begin] = c;
     begin = (begin + 1) % 10;
     int count = 0;
@@ -28,19 +26,18 @@ string &slide::add(char c)
     return str;
 }
 
-vector< string > findRepeatedDnaSequences(string s)
-{
+vector<string> findRepeatedDnaSequences(string s) {
     const int len = s.length();
-    vector< string > ans;
+    vector<string> ans;
     if (len <= 10)
         return ans;
-    unordered_map< string, int > map;
+    unordered_map<string, int> map;
     slide window;
     for (int i = 0; i < 9; ++i)
         window.store[i] = s[i];
     for (int i = 9; i < len; ++i)
         ++map[window.add(s[i])];
-    for (auto &i: map)
+    for (auto &i : map)
         if (i.second > 1)
             ans.push_back(i.first);
     return ans;

@@ -1,20 +1,17 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <iostream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
-vector< vector< string>> groupAnagrams(vector< string > &strs)
-{
-    unordered_map< string, vector< int>> map;
+vector<vector<string>> groupAnagrams(vector<string> &strs) {
+    unordered_map<string, vector<int>> map;
     int count = 0;
-    for (auto &str: strs)
-    {
-        vector< int > table(26, 0);
-        for (auto c: str)
-        {
+    for (auto &str : strs) {
+        vector<int> table(26, 0);
+        for (auto c : str) {
             ++table[c - 'a'];
         }
         string temp;
@@ -25,14 +22,12 @@ vector< vector< string>> groupAnagrams(vector< string > &strs)
         map[temp].push_back(count);
         ++count;
     }
-    vector< vector< string>> ans;
+    vector<vector<string>> ans;
     ans.reserve(map.size());
-    for (auto &i: map)
-    {
+    for (auto &i : map) {
         ans.emplace_back();
         auto t = ans.end() - 1;
-        for (auto s : i.second)
-        {
+        for (auto s : i.second) {
             t->push_back(strs[s]);
         }
     }

@@ -1,45 +1,34 @@
-#include <vector>
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
-
-class MyHashMap
-{
+class MyHashMap {
 public:
-
-
     static const int p = 1 << 14;
     int keys[p];
     int values[p];
 
     /** Initialize your data structure here. */
-    MyHashMap()
-    {
+    MyHashMap() {
         for (auto &i : keys)
             i = -1;
     }
 
     /** value will always be non-negative. */
-    void put(int key, int value)
-    {
+    void put(int key, int value) {
         int pos = key % p, i = pos;
-        for (i = pos; i < p; ++i)
-        {
-            if (keys[i] < 0 || keys[i] == key)
-            {
+        for (i = pos; i < p; ++i) {
+            if (keys[i] < 0 || keys[i] == key) {
                 keys[i] = key;
                 values[i] = value;
                 return;
             }
         }
-        if (i == p)
-        {
-            for (i = 0; i < pos; ++i)
-            {
-                if (keys[i] < 0 || keys[i] == key)
-                {
+        if (i == p) {
+            for (i = 0; i < pos; ++i) {
+                if (keys[i] < 0 || keys[i] == key) {
                     keys[i] = key;
                     values[i] = value;
                     return;
@@ -49,26 +38,20 @@ public:
     }
 
     /** Returns the value to which the specified key is mapped, or -1 if this map contains no mapping for the key */
-    int get(int key)
-    {
+    int get(int key) {
         int pos = key % p, i = pos;
-        for (; i < p; ++i)
-        {
+        for (; i < p; ++i) {
             if (keys[i] == -1)
                 return -1;
-            if (keys[i] == key)
-            {
+            if (keys[i] == key) {
                 return values[i];
             }
         }
-        if (i == p)
-        {
-            for (i = 0; i < pos; ++i)
-            {
+        if (i == p) {
+            for (i = 0; i < pos; ++i) {
                 if (keys[i] == -1)
                     return -1;
-                if (keys[i] == key)
-                {
+                if (keys[i] == key) {
                     return values[i];
                 }
             }
@@ -77,28 +60,22 @@ public:
     }
 
     /** Removes the mapping of the specified value key if this map contains a mapping for the key */
-    void remove(int key)
-    {
+    void remove(int key) {
         int pos = key % p, i = pos;
-        for (; i < p; ++i)
-        {
+        for (; i < p; ++i) {
             if (keys[i] == -1)
                 return;
-            if (keys[i] == key)
-            {
+            if (keys[i] == key) {
                 keys[i] = -2;
                 values[i] = -1;
                 return;
             }
         }
-        if (i == p)
-        {
-            for (i = 0; i < pos; ++i)
-            {
+        if (i == p) {
+            for (i = 0; i < pos; ++i) {
                 if (keys[i] == -1)
                     return;
-                if (keys[i] == key)
-                {
+                if (keys[i] == key) {
                     keys[i] = -2;
                     values[i] = -1;
                     return;
@@ -108,8 +85,7 @@ public:
     }
 };
 
-int main()
-{
+int main() {
     MyHashMap map;
     //map.put(15578, 10);
     //cout << map.get(15578) << endl;
@@ -222,25 +198,20 @@ int main()
     //map.put(63,28);
     //map.remove(15);
     //map.remove(33);
-    for (int i = 0; i < 20; ++i)
-    {
+    for (int i = 0; i < 20; ++i) {
         map.put(i, i);
     }
-    for (int i = (1 << 14); i < (1 << 14) + 20; ++i)
-    {
-        map.put(i, i%500);
+    for (int i = (1 << 14); i < (1 << 14) + 20; ++i) {
+        map.put(i, i % 500);
     }
-    for (int i = (1 << 14); i < (1 << 14) + 20; i += 3)
-    {
+    for (int i = (1 << 14); i < (1 << 14) + 20; i += 3) {
         map.remove(i);
     }
-    for (int i = (1 << 14); i < (1 << 14) + 20; ++i)
-    {
+    for (int i = (1 << 14); i < (1 << 14) + 20; ++i) {
         cout << i << "," << map.get(i) << " ";
         //map.get(i);
     }
-    for (int i = 0; i < 100; ++i)
-    {
+    for (int i = 0; i < 100; ++i) {
         if (i == 20)
             i = 20;
         cout << i << "," << map.get(i) << " ";
@@ -248,8 +219,7 @@ int main()
     cout << endl;
     cout << (1 << 14) << "," << map.get(1 << 14) << endl;
     cout << (1 << 14) + 2 << "," << map.get((1 << 14) + 2) << endl;
-    for (int i = 0; i < 100; ++i)
-    {
+    for (int i = 0; i < 100; ++i) {
         cout << i << ":" << map.values[i] << " ";
     }
     return 0;

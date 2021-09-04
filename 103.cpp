@@ -28,8 +28,6 @@ vector<vector<int>> zigzagLevelOrder(TreeNode *root)
     {
         if (direction)
         {
-            // auto begin = que_1.cbegin();
-            // deque<TreeNode* >::iterator iter = que_1.end() - 1;
             auto iter = que_1.cbegin();
             auto end = que_1.cend();
             vector<int> temp;

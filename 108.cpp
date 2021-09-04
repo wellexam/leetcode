@@ -5,22 +5,25 @@
 
 using namespace std;
 
-struct TreeNode
-{
+struct TreeNode {
     int val;
     TreeNode *left;
     TreeNode *right;
-    TreeNode() : val(0), left(nullptr), right(nullptr) {}
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+    TreeNode() :
+        val(0), left(nullptr), right(nullptr) {
+    }
+    TreeNode(int x) :
+        val(x), left(nullptr), right(nullptr) {
+    }
+    TreeNode(int x, TreeNode *left, TreeNode *right) :
+        val(x), left(left), right(right) {
+    }
 };
 
-void recursive(int first, int last, TreeNode *node, bool left_or_right, vector<int> &nums)
-{
+void recursive(int first, int last, TreeNode *node, bool left_or_right, vector<int> &nums) {
     if (first > last)
         return;
-    if (first == last)
-    {
+    if (first == last) {
         if (left_or_right)
             node->left = new TreeNode(nums[first]);
         else
@@ -28,15 +31,12 @@ void recursive(int first, int last, TreeNode *node, bool left_or_right, vector<i
         return;
     }
     int cur = (first + last) / 2;
-    if (left_or_right)
-    {
+    if (left_or_right) {
         node->left = new TreeNode(nums[cur]);
         recursive(first, cur - 1, node->left, true, nums);
         recursive(cur + 1, last, node->left, false, nums);
         return;
-    }
-    else
-    {
+    } else {
         node->right = new TreeNode(nums[cur]);
         recursive(first, cur - 1, node->right, true, nums);
         recursive(cur + 1, last, node->right, false, nums);
@@ -44,8 +44,7 @@ void recursive(int first, int last, TreeNode *node, bool left_or_right, vector<i
     }
 }
 
-TreeNode *sortedArrayToBST(vector<int> &nums)
-{
+TreeNode *sortedArrayToBST(vector<int> &nums) {
     int len = nums.size();
     int begin = 0, end = len - 1;
     int cur = (begin + end) / 2;
@@ -55,8 +54,7 @@ TreeNode *sortedArrayToBST(vector<int> &nums)
     return root;
 }
 
-int main()
-{
+int main() {
     // int a = 1, sum  = 1;
     // for (int i = 1; i < 13; ++i)
     // {

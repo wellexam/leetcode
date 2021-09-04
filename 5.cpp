@@ -1,32 +1,26 @@
-#include <iostream>
-#include <vector>
 #include <algorithm>
+#include <iostream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 using namespace std;
 
-string longestPalindrome(string s)
-{
+string longestPalindrome(string s) {
     const int len = s.length();
     string ans;
-    for (int i = len; i > 0; --i)
-    {
-        for (int j = 0; j <= len - i; ++j)
-        {
+    for (int i = len; i > 0; --i) {
+        for (int j = 0; j <= len - i; ++j) {
             bool is_break = false;
-            for (int k = j; k < i + j; ++k)
-            {
+            for (int k = j; k < i + j; ++k) {
                 if (k > i - k + 2 * j - 1)
                     break;
-                if (s[k] != s[i - k + 2 * j - 1])
-                {
+                if (s[k] != s[i - k + 2 * j - 1]) {
                     is_break = true;
                     break;
                 }
             }
-            if (!is_break)
-            {
+            if (!is_break) {
                 for (int l = 0; l < i; ++l)
                     ans.push_back(s[l + j]);
                 return ans;
@@ -36,7 +30,6 @@ string longestPalindrome(string s)
     return ans;
 }
 
-int main()
-{
+int main() {
     cout << longestPalindrome("aacabdkacaa");
 }
