@@ -9,25 +9,50 @@ using namespace std;
 
 class Solution {
 public:
-    static bool cmp(const pair<int, int> &lhs, const pair<int, int> &rhs) {
-        return lhs.second > rhs.second;
-    }
-
     vector<int> topKFrequent(vector<int> &nums, int k) {
         unordered_map<int, int> bucket;
-        deque<pair<int, int>> que;
+        vector<pair<int, int>> heap;
         for (auto &i : nums) {
             ++bucket[i];
         }
-        for (auto &i : bucket) {
-            que.push_back({i.first, i.second});
+        auto size = bucket.size();
+        auto iter = bucket.begin();
+        int i = 0;
+        while (i < k) {
+            heap.emplace_back(iter->first, iter->second);
+            for (int j = heap.size() - 1; j > 0; --j) {
+                int father = (j - 1) / 2;
+                if (heap[father].second > heap[j].second) {
+                    swap(heap[father], heap[j]);
+                }
+            }
+            ++iter;
+            ++i;
         }
-        partial_sort(que.begin(), que.begin() + k, que.end(), cmp);
-        vector<int> ans;
-        ans.reserve(k);
-        for (int i = 0; i < k; ++i) {
-            ans.push_back(move(que[i].first));
+        while (i < size) {
+            if (iter->second > heap[0].second) {
+                heap[0] = {iter->first, iter->second};
+                for (int j = k - 1; j > 0; --j) {
+                    int father = (j - 1) / 2;
+                    if (heap[father].second > heap[j].second) {
+                        swap(heap[father], heap[j]);
+                    }
+                }
+            }
+            ++iter;
+            ++i;
+        }
+        vector<int> ans(k);
+        for (i = 0; i < k; ++i) {
+            ans[i] = heap[i].first;
         }
         return ans;
     }
 };
+
+int main() {
+    vector<int> nums{1, 1, 1, 2, 2, 3};
+    Solution p;
+    auto i = p.topKFrequent(nums, 2);
+    return 0;
+}
