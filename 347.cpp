@@ -18,9 +18,14 @@ public:
         auto size = bucket.size();
         auto iter = bucket.begin();
         int i = 0;
-        while (i < k) {
+        while (i < k - 1) {
             heap.emplace_back(iter->first, iter->second);
-            for (int j = heap.size() - 1; j > 0; --j) {
+            ++iter;
+            ++i;
+        }
+        if (i == k - 1) {
+            heap.emplace_back(iter->first, iter->second);
+            for (int j = k - 1; j > 0; --j) {
                 int father = (j - 1) / 2;
                 if (heap[father].second > heap[j].second) {
                     swap(heap[father], heap[j]);
@@ -49,10 +54,3 @@ public:
         return ans;
     }
 };
-
-int main() {
-    vector<int> nums{1, 1, 1, 2, 2, 3};
-    Solution p;
-    auto i = p.topKFrequent(nums, 2);
-    return 0;
-}
