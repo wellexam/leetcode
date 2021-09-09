@@ -33,10 +33,22 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
         int temp = a * a + b * b;
         if (temp < heap[0].first) {
             heap[0] = {temp, count};
-            for (int i = k - 1; i > 0; --i) {
-                if (heap[i].first > heap[(i - 1) / 2].first) {
-                    swap(heap[i], heap[(i - 1) / 2]);
+            for (int row = 0; row * 2 + 2 < k;) {
+                auto is_down = false;
+                for (int current = 0; current < row * 2 + 1 && current < k; ++current) {
+                    if (heap[row + current].first < heap[(row + current) * 2 + 1].first) {
+                        swap(heap[row + current], heap[(row + current) * 2 + 1]);
+                        is_down = true;
+                    }
+                    if (heap[row + current].first < heap[(row + current) * 2 + 2].first) {
+                        swap(heap[row + current], heap[(row + current) * 2 + 2]);
+                        is_down = true;
+                    }
                 }
+                if (!is_down) {
+                    break;
+                }
+                row = row * 2 + 1;
             }
         }
         ++count;
@@ -47,4 +59,10 @@ vector<vector<int>> kClosest(vector<vector<int>> &points, int k) {
         ans.emplace_back(points[i.second]);
     }
     return ans;
+}
+
+int main() {
+    vector<vector<int>> vec{{89, 6}, {-39, -4}, {-13, 91}, {97, -61}, {1, 7}, {-66, 69}, {-51, 68}, {82, -6}, {-21, 44}, {-58, -83}, {-40, 73}, {-88, -24}};
+    kClosest(vec, 6);
+	return 0;
 }
