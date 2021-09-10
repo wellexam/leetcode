@@ -1,62 +1,51 @@
+#include <algorithm>
+#include <cmath>
+#include <deque>
 #include <iostream>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 using namespace std;
 
-class Solution {
-public:
-    vector<int> searchRange(vector<int> &nums, int target) {
-        vector<int> result;
-        int len = nums.size();
-        if (!len) {
-            result.push_back(-1);
-            result.push_back(-1);
-            return result;
-        }
-        int beg = 0, end = len - 1;
-        int pos = len / 2;
-        while (nums[pos] != target) {
-            if (beg == pos || pos == end) {
-                if (nums[beg] == target)
-                    pos = beg;
-                if (nums[end] == target)
-                    pos = end;
+vector<int> searchRange(vector<int> &nums, int target) {
+    int first = 0, last = nums.size() - 1, current = (first + last) >> 2;
+    int size = nums.size();
+    if (!size) {
+        return {-1, -1};
+    }
+    if (nums[last] == target) {
+        current = last;
+    } else {
+        while (first <= last) {
+            if (target < nums[first] || target > nums[last]) {
+                return {-1, -1};
+            }
+            if (nums[current] < target) {
+                if (first != current) {
+                    first = current;
+                    current = (first + last) >> 2;
+                } else {
+                    return {-1, -1};
+                }
+            } else if (nums[current] > target) {
+                if (last != current) {
+                    last = current;
+                    current = (first + last) >> 2;
+                } else {
+                    return {-1, -1};
+                }
+            } else {
                 break;
             }
-            if (nums[pos] > target) {
-                end = pos;
-                pos -= (pos - beg) / 2;
-            } else {
-                beg = pos;
-                pos += (end - pos) / 2;
-            }
-        }
-        if (nums[pos] != target) {
-            result.push_back(-1);
-            result.push_back(-1);
-            return result;
-        } else {
-            beg = pos;
-            end = pos;
-            while (++end < len && nums[end] == target) {
-                continue;
-            }
-            --end;
-            while (--beg >= 0 && nums[beg] == target) {
-                continue;
-            }
-            ++beg;
-            result.push_back(beg);
-            result.push_back(end);
-            return result;
         }
     }
-};
-
-int main() {
-    vector<int> a = {1, 3};
-    Solution p;
-    auto r = p.searchRange(a, 1);
-    cout << r[0] << " " << r[1] << endl;
-    return 0;
+    int begin = current, end = current;
+    while (begin > 0 && nums[begin - 1] == target) {
+        --begin;
+    }
+    while (end < size - 1 && nums[end + 1] == target) {
+        ++end;
+    }
+    return {begin, end};
 }
