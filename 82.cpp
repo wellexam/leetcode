@@ -24,57 +24,55 @@ struct ListNode {
 };
 
 ListNode *deleteDuplicates(ListNode *head) {
-    if (!head)
-        return head;
-    auto *forehead = new ListNode(-101, head), *foreheads = new ListNode(-102, forehead);
-    auto cur = forehead, last = foreheads, next = cur->next;
-    int del_val = foreheads->val;
-    bool flag = false;
-    while (next) {
-        if (cur->val == next->val && next->val == del_val) {
-            cur = next;
-            next = next->next;
-            flag = true;
-        } else if (cur->val == next->val) {
-            del_val = cur->val;
-            cur = next;
-            next = next->next;
-            flag = true;
-        } else if (flag) {
-            last->next = next;
-            flag = false;
-            cur = next;
-            next = next->next;
+    auto dummy_head = new ListNode(-101, head);
+    auto forehead = new ListNode(-102, dummy_head);
+    auto first = dummy_head, last = dummy_head, ahead = forehead;
+    while (last->next) {
+        if (last->next->val == last->val) {
+            last = last->next;
         } else {
-            last = cur;
-            cur = next;
-            next = next->next;
+            if (last != first) {
+                ahead->next = last->next;
+                while (last != first) {
+                    auto temp = first;
+                    first = first->next;
+                    delete temp;
+                }
+                delete last;
+                last = ahead->next;
+                first = last;
+            } else {
+                first = first->next;
+                last = first;
+                ahead = ahead->next;
+            }
         }
     }
-    if (cur && del_val == cur->val)
-        last->next = nullptr;
-    head = forehead->next;
-    return head;
+    if (last != first) {
+        ahead->next = last->next;
+        while (last != first) {
+            auto temp = first;
+            first = first->next;
+            delete temp;
+        }
+        delete last;
+        last = ahead->next;
+        first = last;
+    }
+    auto temp = dummy_head->next;
+    delete dummy_head;
+    delete forehead;
+    return temp;
 }
 
 int main() {
-    int input;
-    char ch;
-    auto *head = new ListNode();
-    auto cur = head;
-    string s;
-    cin >> s;
-    head->val = s[0] - '0';
-    for (int i = 1; i < s.length(); ++i)
-        if (s[i] >= '0' && s[i] <= '9') {
-            cur->next = new ListNode(s[i] - '0');
-            cur = cur->next;
-        }
-    head = deleteDuplicates(head);
-    cur = head;
-    while (cur) {
-        cout << cur->val << " ";
-        cur = cur->next;
-    }
+    auto head = new ListNode(1);
+    head->next = new ListNode(1);
+    // head->next->next = new ListNode(3);
+    // head->next->next->next = new ListNode(3);
+    // head->next->next->next->next = new ListNode(4);
+    // head->next->next->next->next->next = new ListNode(4);
+    // head->next->next->next->next->next->next = new ListNode(5);
+    auto res = deleteDuplicates(head);
     return 0;
 }
