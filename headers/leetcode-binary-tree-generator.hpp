@@ -75,3 +75,55 @@ TreeNode *BTGenerator(string str) {
     }
     return root;
 }
+
+class Node {
+public:
+    int val;
+    Node *left;
+    Node *right;
+    Node *next;
+
+    Node() : val(0), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val) : val(_val), left(NULL), right(NULL), next(NULL) {}
+
+    Node(int _val, Node *_left, Node *_right, Node *_next) : val(_val), left(_left), right(_right), next(_next) {}
+};
+
+
+//Binary tree generator for leetcode.
+Node *BTGenerator_s(string str) {
+    replaceAll(str, ",", " ");
+    replaceAll(str, "null", "-2147483648");
+    stringstream stream;
+    stream << str;
+    deque<Node *> que, parents;
+    deque<int> node_vals;
+    auto count = 0, product = 2;
+    auto node_val = 0;
+    while (stream >> node_val) {
+        node_vals.push_back(node_val);
+    }
+    auto root = new Node(node_vals[0]);
+    parents.push_back(root);
+    node_vals.pop_front();
+    while (!node_vals.empty()) {
+        for (; count < product && !node_vals.empty(); ++count) {
+            if (node_vals[0] != 1 << 31) {
+                auto temp = new Node(node_vals[0]);
+                if (count % 2) {
+                    parents[count / 2]->right = temp;
+                } else {
+                    parents[count / 2]->left = temp;
+                }
+                que.push_back(temp);
+            }
+            node_vals.pop_front();
+        }
+        parents.clear();
+        swap(parents, que);
+        product = parents.size() * 2;
+        count = 0;
+    }
+    return root;
+}
