@@ -1,8 +1,4 @@
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include "regular_headers.hpp"
 
 using namespace std;
 
@@ -28,8 +24,4 @@ string longestPalindrome(string s) {
         }
     }
     return ans;
-}
-
-int main() {
-    cout << longestPalindrome("aacabdkacaa");
 }
