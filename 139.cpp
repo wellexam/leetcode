@@ -9,7 +9,9 @@ public:
 };
 
 bool dfs(string &s, int pos, trie *root, trie *current) {
-    
+    if (pos == s.size()) {
+        return true;
+    }
 }
 
 bool wordBreak(string s, vector<string> &wordDict) {
