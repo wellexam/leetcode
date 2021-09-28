@@ -4,13 +4,26 @@ using namespace std;
 
 int coinChange(vector<int> &coins, int amount) {
     int n = coins.size();
-    vector<int> dp(amount, amount);
+    vector<int> dp(amount + 1, -1);
     sort(coins.begin(), coins.end());
-    for (auto &i : coins) {
-        if (i >= amount) {
-            break;
+    dp[0] = 0;
+    int current = coins[0];
+    while (current <= amount) {
+        int min_amount = 100000;
+        for (auto &i : coins) {
+            if (i > current) {
+                break;
+            }
+            auto temp = dp[current - i];
+            if (temp == -1) {
+                continue;
+            }
+            min_amount = min(temp + 1, min_amount);
         }
-        dp[i] = 1;
+        if (min_amount != 100000) {
+            dp[current] = min_amount;
+        }
+        ++current;
     }
-    int current = 1;
+    return dp[amount];
 }
