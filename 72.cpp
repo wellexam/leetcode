@@ -33,5 +33,23 @@ int minDistance(string word1, string word2) {
             }
         }
     }
-    return size_1 + size_2 - 2 * dp[size_1 - 1][size_2 - 1];
+    stack<pair<int, int>> serial;
+    int index_1 = size_1 - 1, index_2 = size_2 - 1;
+    while (index_1 > 0 && index_2 > 0) {
+        auto temp = dp[index_1][index_2];
+        if (temp > dp[index_1 - 1][index_2 - 1]) {
+            serial.emplace(index_1, index_2);
+        } else if (dp[index_1 - 1][index_2] == temp) {
+            --index_1;
+        } else {
+            --index_2;
+        }
+    }
+    if (word1[index_1] == word2[index_2]) {
+        serial.emplace(index_1, index_2);
+    }
+    while (!serial.empty()) {
+        auto current = serial.top();
+        serial.pop();
+    }
 }
