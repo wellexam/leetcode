@@ -5,26 +5,18 @@ using namespace std;
 class Solution {
 private:
     vector<int> origin;
+    vector<int> current;
 
 public:
-    Solution(vector<int> &nums) { origin = nums; }
+    Solution(vector<int> &nums) {
+        origin = nums;
+        current = nums;
+        sort(current.begin(), current.end());
+    }
 
     vector<int> reset() { return origin; }
 
-    vector<int> shuffle() {
-        int len = origin.size();
-        vector<bool> table(len, false);
-        vector<int> ans(len, 0);
-        for (auto &i : origin) {
-            auto index = rand() % len;
-            while (table[index]) {
-                index = rand() % len;
-            }
-            table[index] = true;
-            ans[index] = i;
-        }
-        return ans;
-    }
+    vector<int> shuffle() {}
 };
 
 /**
