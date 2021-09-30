@@ -7,7 +7,6 @@ bool cmp(const vector<int> &a, const vector<int> &b) {
 }
 
 int maxPoints(vector<vector<int>> &points) {
-    // sort(points.begin(), points.end(), cmp);
     unordered_map<string, int> map;
     int n = points.size();
     for (int i = 0; i < n - 1; ++i) {
@@ -32,6 +31,7 @@ int maxPoints(vector<vector<int>> &points) {
     for (auto &i : map) {
         ans = max(i.second, ans);
     }
+    ans = (1 + (sqrt(1 + 8 * ans))) / 2;
     return ans;
 }
 
