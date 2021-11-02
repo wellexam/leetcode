@@ -1,4 +1,5 @@
 #include "leetcode-binary-tree-generator.hpp"
+#include "list_node.hpp"
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
