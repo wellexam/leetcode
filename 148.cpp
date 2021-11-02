@@ -35,34 +35,52 @@ void sortlist(ListNode *start, ListNode *end) {
     sortlist(mid, end);
 }
 
-void merge(ListNode *a, ListNode *b, ListNode *c, ListNode *d) {
-    if (a !=b && c != d) {
-        if (c->val < a->val) {
-            auto cnext = c->next;
-            c->next = a;
-            a = c;
-            c = cnext;
+ListNode *merge(ListNode *first, ListNode *second, ListNode *end) {
+    auto new_start = first;
+    auto second_flag = second;
+    if (first != second_flag && second != end) {
+        if (second->val < first->val) {
+            auto temp = second->next;
+            second->next = first;
+            first = second;
+            second = temp;
+            new_start = first;
         }
     }
-    while (a != b || c != d) {
-        if (c->val >= a->val && a->next != b) {
-            if (c->val <= a->next->val) {
-                auto cnext = c->next, anext = a->next;
-                a->next = c;
-                c->next = anext;
-                c = cnext;
-                a = a->next;
-            } else {
-                a = a->next;
-            }
+    while (first->next != second_flag && second != end) {
+        if (second->val <= first->next->val) {
+            auto f_next = first->next, s_next = second->next;
+            first->next = second;
+            second->next = f_next;
+            second = s_next;
+            first = first->next;
+        } else {
+            first = first->next;
         }
     }
-    if (c != d) {
-        auto anext = a->next;
-        a->next = c;
-        while (c->next != d) {
-            c = c->next;
-        }
-        c->next = anext;
-    }
+    if (second)
 }
+
+// void merge(ListNode *a, ListNode *b, ListNode *c, ListNode *d) {
+//     while (a != b || c != d) {
+//         if (c->val >= a->val && a->next != b) {
+//             if (c->val <= a->next->val) {
+//                 auto cnext = c->next, anext = a->next;
+//                 a->next = c;
+//                 c->next = anext;
+//                 c = cnext;
+//                 a = a->next;
+//             } else {
+//                 a = a->next;
+//             }
+//         }
+//     }
+//     if (c != d) {
+//         auto anext = a->next;
+//         a->next = c;
+//         while (c->next != d) {
+//             c = c->next;
+//         }
+//         c->next = anext;
+//     }
+// }
