@@ -1,3 +1,4 @@
+#pragma once
 #include "leetcode-binary-tree-generator.hpp"
 #include "list_node.hpp"
 #include <algorithm>

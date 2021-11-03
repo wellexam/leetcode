@@ -1,39 +1,8 @@
+#include "leetcode-list-generator.hpp"
 #include "regular_headers.hpp"
+#include <iostream>
 
 using namespace std;
-
-ListNode *sortList(ListNode *head) {
-    ListNode *mid, *last;
-    while (last->next) {
-        last = last->next;
-        if (last->next) {
-            last = last->next;
-        }
-        if (mid->next) {
-            mid = mid->next;
-        }
-    }
-}
-
-void sortlist(ListNode *start, ListNode *end) {
-    if (start->next == end || start->next->next == end) {
-        return;
-    }
-    ListNode *mid, *last;
-    mid = start;
-    last = start;
-    while (last->next != end) {
-        last = last->next;
-        if (last->next != end) {
-            last = last->next;
-        }
-        if (mid->next != end) {
-            mid = mid->next;
-        }
-    }
-    sortlist(start, mid);
-    sortlist(mid, end);
-}
 
 ListNode *merge(ListNode *first, ListNode *second, ListNode *end) {
     auto new_start = first;
@@ -58,29 +27,62 @@ ListNode *merge(ListNode *first, ListNode *second, ListNode *end) {
             first = first->next;
         }
     }
-    if (second)
+    if (second != end) {
+        first->next = second;
+    } else {
+        while (first->next != second_flag) {
+            first = first->next;
+        }
+        first->next = end;
+    }
+    return new_start;
 }
 
-// void merge(ListNode *a, ListNode *b, ListNode *c, ListNode *d) {
-//     while (a != b || c != d) {
-//         if (c->val >= a->val && a->next != b) {
-//             if (c->val <= a->next->val) {
-//                 auto cnext = c->next, anext = a->next;
-//                 a->next = c;
-//                 c->next = anext;
-//                 c = cnext;
-//                 a = a->next;
-//             } else {
-//                 a = a->next;
-//             }
-//         }
-//     }
-//     if (c != d) {
-//         auto anext = a->next;
-//         a->next = c;
-//         while (c->next != d) {
-//             c = c->next;
-//         }
-//         c->next = anext;
-//     }
-// }
+ListNode *sortlist(ListNode *start, ListNode *end) {
+    if (start->next == end || start->next->next == end) {
+        return start;
+    }
+    ListNode *mid, *last;
+    mid = start;
+    last = start;
+    while (last->next != end) {
+        last = last->next;
+        if (last->next != end) {
+            last = last->next;
+        }
+        if (mid->next != end) {
+            mid = mid->next;
+        }
+    }
+    start = sortlist(start, mid);
+    mid = sortlist(mid, end);
+    start = merge(start, mid, end);
+    return start;
+}
+
+ListNode *sortList(ListNode *head) {
+    ListNode *mid = head, *last = head;
+    while (last->next) {
+        last = last->next;
+        if (last->next) {
+            last = last->next;
+        }
+        if (mid->next) {
+            mid = mid->next;
+        }
+    }
+    head = sortlist(head, mid);
+    mid = sortlist(mid, nullptr);
+    head = merge(head, mid, nullptr);
+    return head;
+}
+
+int main() {
+    auto head = list_generator({10, 9, 8, 7, 6, 5, 4, 3, 2, 1});
+    // auto head = list_generator({4, 3, 2, 1});
+    head = sortList(head);
+    while (head) {
+        cout << head->val << "\t";
+        head = head->next;
+    }
+}
