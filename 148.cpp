@@ -4,6 +4,14 @@
 
 using namespace std;
 
+void print(ListNode *head) {
+    while (head) {
+        cout << head->val << "\t";
+        head = head->next;
+    }
+    cout << endl;
+}
+
 ListNode *merge(ListNode *first, ListNode *second, ListNode *end) {
     auto new_start = first;
     auto second_flag = second;
@@ -39,7 +47,7 @@ ListNode *merge(ListNode *first, ListNode *second, ListNode *end) {
 }
 
 ListNode *sortlist(ListNode *start, ListNode *end) {
-    if (start->next == end || start->next->next == end) {
+    if (start == end || start->next == end) {
         return start;
     }
     ListNode *mid, *last;
@@ -55,8 +63,11 @@ ListNode *sortlist(ListNode *start, ListNode *end) {
         }
     }
     start = sortlist(start, mid);
+    print(start);
     mid = sortlist(mid, end);
+    print(start);
     start = merge(start, mid, end);
+    print(start);
     return start;
 }
 
@@ -72,17 +83,28 @@ ListNode *sortList(ListNode *head) {
         }
     }
     head = sortlist(head, mid);
+    print(head);
     mid = sortlist(mid, nullptr);
+    print(head);
     head = merge(head, mid, nullptr);
     return head;
 }
 
 int main() {
-    auto head = list_generator({10, 9, 8, 7, 6, 5, 4, 3, 2, 1});
+    auto head = list_generator({5, 4, 3, 2, 1});
     // auto head = list_generator({4, 3, 2, 1});
     head = sortList(head);
-    while (head) {
-        cout << head->val << "\t";
-        head = head->next;
-    }
+    print(head);
+    // auto a = list_generator({1, 3, 5, 7, 9, 11});
+    // auto b = list_generator({-1, -2, 2, 3, 4, 6, 8, 10});
+    // auto end = a;
+    // while (end->next) {
+    //     end = end->next;
+    // }
+    // end->next = b;
+    // end = b;
+    // while (end->next) {
+    //     end = end->next;
+    // }
+    // auto head = merge(a, b, nullptr);
 }
