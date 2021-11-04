@@ -12,82 +12,89 @@ void print(ListNode *head) {
     cout << endl;
 }
 
-ListNode *merge(ListNode *first, ListNode *second, ListNode *end) {
-    auto new_start = first;
-    auto second_flag = second;
-    if (first != second_flag && second != end) {
-        if (second->val < first->val) {
-            auto temp = second->next;
-            second->next = first;
-            first = second;
-            second = temp;
-            new_start = first;
+ListNode *merge(ListNode *l1, ListNode *l2, ListNode *&tail) {
+    if (!l1 || !l2) {
+        if (l1) {
+            return l1;
+        }
+        if (l2) {
+            return l2;
+        }
+        return nullptr;
+    }
+    auto new_start = l1;
+    if (l1 && l2) {
+        if (l2->val < l1->val) {
+            auto temp = l2->next;
+            l2->next = l1;
+            l1 = l2;
+            l2 = temp;
+            new_start = l1;
         }
     }
-    while (first->next != second_flag && second != end) {
-        if (second->val <= first->next->val) {
-            auto f_next = first->next, s_next = second->next;
-            first->next = second;
-            second->next = f_next;
-            second = s_next;
-            first = first->next;
+    while (l1->next && l2) {
+        if (l2->val <= l1->next->val) {
+            auto f_next = l1->next, s_next = l2->next;
+            l1->next = l2;
+            l2->next = f_next;
+            l2 = s_next;
+            l1 = l1->next;
         } else {
-            first = first->next;
+            l1 = l1->next;
         }
     }
-    if (second != end) {
-        first->next = second;
-    } else {
-        while (first->next != second_flag) {
-            first = first->next;
+    if (l2) {
+        l1->next = l2;
+        while (l2->next) {
+            l2 = l2->next;
         }
-        first->next = end;
+        tail = l2;
+    } else {
+        while (l1->next) {
+            l1 = l1->next;
+        }
+        l1->next = nullptr;
+        tail = l1;
     }
     return new_start;
 }
 
-ListNode *sortlist(ListNode *start, ListNode *end) {
-    if (start == end || start->next == end) {
-        return start;
+ListNode *split(ListNode *head, int n) {
+    while (head->next && --n) {
+        head = head->next;
     }
-    ListNode *mid, *last;
-    mid = start;
-    last = start;
-    while (last->next != end) {
-        last = last->next;
-        if (last->next != end) {
-            last = last->next;
-        }
-        if (mid->next != end) {
-            mid = mid->next;
-        }
-    }
-    start = sortlist(start, mid);
-    print(start);
-    mid = sortlist(mid, end);
-    print(start);
-    start = merge(start, mid, end);
-    print(start);
-    return start;
+    auto new_head = head->next;
+    head->next = nullptr;
+    return new_head;
 }
 
 ListNode *sortList(ListNode *head) {
-    ListNode *mid = head, *last = head;
-    while (last->next) {
-        last = last->next;
-        if (last->next) {
-            last = last->next;
-        }
-        if (mid->next) {
-            mid = mid->next;
-        }
+    if (!head) {
+        return head;
     }
-    head = sortlist(head, mid);
-    print(head);
-    mid = sortlist(mid, nullptr);
-    print(head);
-    head = merge(head, mid, nullptr);
-    return head;
+    auto temp = head;
+    int count = 1;
+    while (temp->next) {
+        temp = temp->next;
+        ++count;
+    }
+    auto current_head = head;
+    int n = 1;
+    auto current_head = head;
+    while (n / 2 < count) {
+        while (current_head) {
+            auto second_head = split(current_head, n);
+            if (!second_head) {
+                
+            }
+            auto next_head = split(second_head, n);
+            auto tail = current_head;
+            merge(current_head, second_head, tail);
+            current_head = next_head;
+            tail->next = next_head;
+        }
+        n *= 2;
+    }
 }
 
 int main() {
@@ -95,16 +102,4 @@ int main() {
     // auto head = list_generator({4, 3, 2, 1});
     head = sortList(head);
     print(head);
-    // auto a = list_generator({1, 3, 5, 7, 9, 11});
-    // auto b = list_generator({-1, -2, 2, 3, 4, 6, 8, 10});
-    // auto end = a;
-    // while (end->next) {
-    //     end = end->next;
-    // }
-    // end->next = b;
-    // end = b;
-    // while (end->next) {
-    //     end = end->next;
-    // }
-    // auto head = merge(a, b, nullptr);
 }
