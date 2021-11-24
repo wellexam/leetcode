@@ -6,26 +6,28 @@ int longestConsecutive(vector<int> &nums) {
     if (nums.empty()) {
         return 0;
     }
-    map<int, bool> map;
+    unordered_map<int, bool> map;
     for (auto &i : nums) {
         map[i] = true;
     }
-    sort(nums.begin(), nums.end());
-    vector<int> shit;
-    shit.push_back(nums.front());
-    for (auto &i : nums) {
-        shit.push_back(i);
-    }
-    int ans = 0, current = 0;
-    for (int i = 1; i < nums.size(); ++i) {
-        if (nums[i] - 1 == nums[i - 1]) {
-            ++current;
-        } else {
-            ans = max(ans, current);
-            current = 1;
+    int ans = 1;
+    for (auto &i : map) {
+        auto pos = map.find(i.first - 1);
+        if (pos != map.end()) {
+            continue;
+        }
+        int current = 1;
+        for (int j = i.first + 1;;) {
+            auto temp = map.find(j);
+            if (temp != map.end()) {
+                ++current;
+                ++j;
+            } else {
+                ans = max(current, ans);
+                break;
+            }
         }
     }
-    ans = max(ans, current);
     return ans;
 }
 
