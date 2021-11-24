@@ -4,8 +4,14 @@ using namespace std;
 
 class trie {
 public:
-    vector<trie *> chileren{26, nullptr};
+    vector<trie *> children{26, nullptr};
     bool is_end = false;
+
+    ~trie() {
+        for (auto &i : children) {
+            delete i;
+        }
+    }
 };
 
 bool dfs(string &s, int pos, trie *root, unordered_map<int, vector<pair<int, trie *>>> &map) {
@@ -23,8 +29,8 @@ bool dfs(string &s, int pos, trie *root, unordered_map<int, vector<pair<int, tri
         current = (map[pos].end() - 1)->first + 1;
         current_node = (map[pos].end() - 1)->second;
     }
-    while (current < s.size() && current_node->chileren[s[current] - 'a']) {
-        current_node = current_node->chileren[s[current] - 'a'];
+    while (current < s.size() && current_node->children[s[current] - 'a']) {
+        current_node = current_node->children[s[current] - 'a'];
         if (current_node->is_end) {
             map[pos].emplace_back(current, current_node);
             if (dfs(s, current + 1, root, map)) {
@@ -41,11 +47,11 @@ bool wordBreak(string s, vector<string> &wordDict) {
     for (auto &i : wordDict) {
         auto current = &root;
         for (auto &j : i) {
-            if (current->chileren[j - 'a']) {
-                current = current->chileren[j - 'a'];
+            if (current->children[j - 'a']) {
+                current = current->children[j - 'a'];
             } else {
-                current->chileren[j - 'a'] = new trie;
-                current = current->chileren[j - 'a'];
+                current->children[j - 'a'] = new trie;
+                current = current->children[j - 'a'];
             }
         }
         current->is_end = true;
