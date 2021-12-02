@@ -13,7 +13,6 @@ int expand(int begin, int end, string &s) {
             break;
         }
     }
-    table.emplace_back(begin, end);
     return end;
 }
 
@@ -25,12 +24,50 @@ void merge(string &s) {
             if (i < s.size() - 1 && s[i + 1] == ')') {
                 end = i + 1;
                 end = expand(begin, end, s);
+                begin -= end - (i + 1);
+                table.emplace_back(begin, end);
             }
         }
         i = end + 1;
     }
 }
 
+void loop(string &s) {
+    bool mark = true;
+    while (mark) {
+        mark = false;
+        for (auto iter = table.begin(); iter != table.end();) {
+            auto next = iter;
+            ++next;
+            while (next != table.end()) {
+                if (iter->second == next->first - 1) {
+                    iter->second = next->second;
+                    next = table.erase(next);
+                    mark = true;
+                } else {
+                    break;
+                }
+            }
+            ++iter;
+        }
+        for (auto &i : table) {
+            auto begin = i.first, end = i.second;
+            end = expand(begin, end, s);
+            if (end != i.second) {
+                mark = true;
+            }
+            begin -= end - i.second;
+            i = {begin, end};
+        }
+    }
+}
+
 int longestValidParentheses(string s) {
     merge(s);
+    loop(s);
+    int ans = 0;
+    for (auto &i : table) {
+        ans = max(i.second - i.first + 1, ans);
+    }
+    return ans;
 }
