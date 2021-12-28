@@ -16,4 +16,4 @@ def remove_files(rootdir, ext, show=False):
         os.remove(i)
 
 
-remove_files("../", "*.exe", True)
+remove_files("./", "*.exe", True)
