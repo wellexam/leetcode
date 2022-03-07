@@ -3,37 +3,42 @@
 
 using namespace std;
 
+void recursive(vector<vector<int>> &mat, int origin, int &current) {
+    int n = mat.size();
+    int length = n - origin * 2;
+    pair<int, int> pos{origin, origin};
+    for (int i = 0; i < length - 1; i++) {
+        mat[pos.first][pos.second + i] = current++;
+    }
+    pos = {origin, origin + length - 1};
+    for (int i = 0; i < length - 1; i++) {
+        mat[pos.first + i][pos.second] = current++;
+    }
+    pos = {origin + length - 1, origin + length - 1};
+    for (int i = 0; i < length - 1; i++) {
+        mat[pos.first][pos.second - i] = current++;
+    }
+    pos = {origin + length - 1, origin};
+    for (int i = 0; i < length - 1; i++) {
+        mat[pos.first - i][pos.second] = current++;
+    }
+    return;
+}
+
 vector<vector<int>> generateMatrix(int n) {
-    vector<vector<int>> mat;
-    mat.reserve(n * n);
-    vector<int> temp;
-    temp.reserve(n);
-    for (int i = 0; i < n; ++i) {
-        temp.push_back(0);
+    vector<vector<int>> ans(n, vector<int>(n));
+    int current = 1;
+    for (int origin = 0; origin <= n / 2; origin++) {
+        recursive(ans, origin, current);
     }
-    for (int i = 0; i < n; ++i) {
-        mat.push_back(temp);
+    if (n % 2) {
+        ans[n / 2][n / 2] = n * n;
     }
-    int count = 1;
-    for (int i = 0; i < (n / 2) + (n % 2); ++i) {
-        for (int y = i; y <= n - 1 - i; ++y) {
-            mat[i][y] = count++;
-        }
-        for (int x = i + 1; x <= n - 1 - i; ++x) {
-            mat[x][n - 1 - i] = count++;
-        }
-        for (int y = n - 1 - i - 1; y >= i; --y) {
-            mat[n - 1 - i][y] = count++;
-        }
-        for (int x = n - 1 - i - 1; x > i; --x) {
-            mat[x][i] = count++;
-        }
-    }
-    return mat;
+    return ans;
 }
 
 int main() {
-    auto ans = generateMatrix(5);
+    auto ans = generateMatrix(3);
     for (auto i : ans) {
         for (auto j : i) {
             cout << j << " ";
