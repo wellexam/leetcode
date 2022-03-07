@@ -5,30 +5,25 @@
 using namespace std;
 
 void sortColors(vector<int> &nums) {
-    int p0 = 0, p2 = nums.size() - 1, i = 0;
-    for (; i <= p2; ++i) {
+    int p0 = 0, p1 = 0;
+    for (int i = 0; i < nums.size(); i++) {
         if (nums[i] == 0) {
-            int temp = nums[p0];
-            nums[p0] = nums[i];
-            nums[i] = temp;
+            swap(nums[p0], nums[i]);
+            if (p1 > p0) {
+                swap(nums[p1], nums[i]);
+            }
             ++p0;
-        } else if (nums[i] == 2) {
-            int temp = nums[p2];
-            nums[p2] = nums[i];
-            nums[i] = temp;
-            --p2;
-            --i;
+            ++p1;
+        } else if (nums[i] == 1) {
+            swap(nums[i], nums[p1]);
+            p1++;
         }
     }
-    printf("%c", '[');
-    for (int j = 0; j < nums.size() - 1; ++j) {
-        printf("%d,", nums[j]);
-    }
-    printf("%d]", nums[nums.size() - 1]);
+    return;
 }
 
 int main() {
-    vector<int> nums = {1, 2, 0};
+    vector<int> nums = {1, 0};
     sortColors(nums);
     return 0;
 }

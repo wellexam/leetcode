@@ -12,89 +12,63 @@ void print(ListNode *head) {
     cout << endl;
 }
 
-ListNode *merge(ListNode *l1, ListNode *l2, ListNode *&tail) {
-    if (!l1 || !l2) {
-        if (l1) {
-            return l1;
-        }
-        if (l2) {
-            return l2;
-        }
-        return nullptr;
+ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
+    if (!l1) {
+        return l2;
     }
-    auto new_start = l1;
-    if (l1 && l2) {
-        if (l2->val < l1->val) {
-            auto temp = l2->next;
-            l2->next = l1;
-            l1 = l2;
-            l2 = temp;
-            new_start = l1;
+    if (!l2) {
+        return l1;
+    }
+    auto head = l1;
+    auto cursor = l2;
+    if (l2->val < l1->val) {
+        swap(head, cursor);
+    }
+    auto current = head;
+    while (current && cursor) {
+        if (!current->next) {
+            current->next = cursor;
+            break;
+        }
+        if (cursor->val >= current->val) {
+            if (cursor->val >= current->next->val) {
+                current = current->next;
+                continue;
+            } else {
+                auto temp = current->next;
+                current->next = cursor;
+                current = current->next;
+                cursor = cursor->next;
+                current->next = temp;
+            }
         }
     }
-    while (l1->next && l2) {
-        if (l2->val <= l1->next->val) {
-            auto f_next = l1->next, s_next = l2->next;
-            l1->next = l2;
-            l2->next = f_next;
-            l2 = s_next;
-            l1 = l1->next;
-        } else {
-            l1 = l1->next;
-        }
-    }
-    if (l2) {
-        l1->next = l2;
-        while (l2->next) {
-            l2 = l2->next;
-        }
-        tail = l2;
-    } else {
-        while (l1->next) {
-            l1 = l1->next;
-        }
-        l1->next = nullptr;
-        tail = l1;
-    }
-    return new_start;
+    return head;
 }
 
-ListNode *split(ListNode *head, int n) {
-    while (head->next && --n) {
-        head = head->next;
+ListNode *sortList(ListNode *head, ListNode *tail) {
+    if (head == nullptr) {
+        return head;
     }
-    auto new_head = head->next;
-    head->next = nullptr;
-    return new_head;
+    if (head->next == tail) {
+        head->next = nullptr;
+        return head;
+    }
+    auto fast = head, slow = head;
+    while (fast != tail) {
+        fast = fast->next;
+        slow = slow->next;
+        if (fast != tail) {
+            fast = fast->next;
+        }
+    }
+    auto mid = slow;
+    head = mergeTwoLists(sortList(head, mid), sortList(mid, tail));
+    return head;
 }
 
 ListNode *sortList(ListNode *head) {
-    if (!head) {
-        return head;
-    }
-    auto temp = head;
-    int count = 1;
-    while (temp->next) {
-        temp = temp->next;
-        ++count;
-    }
-    auto current_head = head;
-    int n = 1;
-    auto current_head = head;
-    while (n / 2 < count) {
-        while (current_head) {
-            auto second_head = split(current_head, n);
-            if (!second_head) {
-                
-            }
-            auto next_head = split(second_head, n);
-            auto tail = current_head;
-            merge(current_head, second_head, tail);
-            current_head = next_head;
-            tail->next = next_head;
-        }
-        n *= 2;
-    }
+    return sortList(head, nullptr);
 }
 
 int main() {
