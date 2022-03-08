@@ -7,41 +7,41 @@
 using namespace std;
 
 bool wordPattern(string pattern, string s) {
-    unordered_map<char, string> map;
-    unordered_map<string, char> map1;
-    int pos = 0;
-    for (int i = 0; i < pattern.length(); ++i) {
-        if (pos >= s.length())
-            return false;
+    unordered_map<char, string> umap;
+    unordered_map<string, char> r_umap;
+    int cursor = 0;
+    for (int i = 0; i < pattern.size(); i++) {
         string temp;
-        while (s[pos] != ' ' && pos < s.length()) {
-            temp.push_back(s[pos]);
-            ++pos;
+        while (cursor < s.size() && s[cursor] != ' ') {
+            temp.push_back(s[cursor]);
+            cursor++;
         }
-        ++pos;
-        if (!map[pattern[i]].empty()) {
-            if (map[pattern[i]] == temp) {
-                if (map1[temp] == pattern[i])
-                    continue;
-                else
-                    return false;
+        cursor++;
+        auto iter = umap.find(pattern[i]);
+        auto iter2 = r_umap.find(temp);
+        if (iter == umap.end()) {
+            umap[pattern[i]] = temp;
+            if (iter2 != r_umap.end()) {
+                return false;
+            } else {
+                r_umap[temp] = pattern[i];
+            }
+            continue;
+        } else {
+            if (iter->second == temp) {
+                continue;
             } else {
                 return false;
             }
-        } else {
-            auto pla = map1.find(temp);
-            if (pla != map1.end())
-                return false;
-            map[pattern[i]] = temp;
-            map1[temp] = pattern[i];
         }
     }
-    if (pos != s.length() + 1)
+    if (cursor <= s.size()) {
         return false;
+    }
     return true;
 }
 
 int main() {
-    cout << wordPattern("abc", "dog cat dog");
+    cout << wordPattern("he", "unit");
     return 0;
 }

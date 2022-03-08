@@ -3,23 +3,37 @@
 using namespace std;
 
 int lengthOfLIS(vector<int> &nums) {
-    int n = nums.size();
-    vector<int> dp(n, 0);
-    dp[0] = 1;
-    int current = 1;
-    int max_len = 1;
-    while (current < n) {
-        int max_num = 0;
-        for (int i = 0; i < current; ++i) {
-            if (nums[i] < nums[current] && dp[i] > max_num) {
-                max_num = dp[i];
+    vector<int> tails;
+    tails.reserve(nums.size());
+    tails.push_back(nums[0]);
+    for (int i = 1; i < nums.size(); i++) {
+        if (tails.back() < nums[i]) {
+            tails.push_back(nums[i]);
+            continue;
+        }
+        int length = tails.size();
+        int left = 0, right = length, mid = 0;
+        while (left <= right) {
+            mid = left + (right - left) / 2;
+            if (tails[mid] == nums[i]) {
+                break;
+            }
+            if (mid > 0 && tails[mid - 1] < nums[i] && tails[mid] > nums[i]) {
+                tails[mid] = nums[i];
+                break;
+            }
+            if (mid == 0 && tails[mid] > nums[i]) {
+                tails[mid] = nums[i];
+                break;
+            }
+            if (tails[mid] > nums[i]) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
             }
         }
-        dp[current] = max_num + 1;
-        ++current;
-        max_len = max(dp[current - 1], max_len);
     }
-    return max_len;
+    return tails.size();
 }
 
 int main() {
