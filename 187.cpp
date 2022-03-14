@@ -6,39 +6,68 @@
 
 using namespace std;
 
-class slide {
-public:
-    int begin = 9;
-    char store[10] = {};
-    string str = "0123456789";
-
-    string &add(char);
-};
-
-string &slide::add(char c) {
-    store[begin] = c;
-    begin = (begin + 1) % 10;
-    int count = 0;
-    for (int i = begin; i < 10; ++i)
-        str[count++] = store[i];
-    for (int i = 0; i < begin; ++i)
-        str[count++] = store[i];
-    return str;
+vector<string> findRepeatedDnaSequences(string s) {
+    if (s.size() < 10) {
+        return vector<string>{};
+    }
+    vector<string> ans;
+    unsigned int state = 0;
+    unsigned int mask = 0b00000000000011111111111111111111;
+    unordered_map<unsigned int, int> umap;
+    int end = 9;
+    for (int i = 0; i < end; i++) {
+        state <<= 2;
+        if (s[i] == 'A') {
+            state += 0;
+        } else if (s[i] == 'C') {
+            state += 1;
+        } else if (s[i] == 'G') {
+            state += 2;
+        } else {
+            state += 3;
+        }
+    }
+    while (end < s.size()) {
+        state <<= 2;
+        if (s[end] == 'A') {
+            state += 0;
+        } else if (s[end] == 'C') {
+            state += 1;
+        } else if (s[end] == 'G') {
+            state += 2;
+        } else {
+            state += 3;
+        }
+        state &= mask;
+        umap[state]++;
+        end++;
+    }
+    mask = 3;
+    for (auto &i : umap) {
+        auto str = i.first;
+        if (i.second == 1) {
+            continue;
+        }
+        string temp(10, '\0');
+        for (int j = 9; j >= 0; j--) {
+            auto c = mask & str;
+            if (c == 0) {
+                temp[j] = 'A';
+            } else if (c == 1) {
+                temp[j] = 'C';
+            } else if (c == 2) {
+                temp[j] = 'G';
+            } else {
+                temp[j] = 'T';
+            }
+            str >>= 2;
+        }
+        ans.push_back(move(temp));
+    }
+    return ans;
 }
 
-vector<string> findRepeatedDnaSequences(string s) {
-    const int len = s.length();
-    vector<string> ans;
-    if (len <= 10)
-        return ans;
-    unordered_map<string, int> map;
-    slide window;
-    for (int i = 0; i < 9; ++i)
-        window.store[i] = s[i];
-    for (int i = 9; i < len; ++i)
-        ++map[window.add(s[i])];
-    for (auto &i : map)
-        if (i.second > 1)
-            ans.push_back(i.first);
-    return ans;
+int main() {
+    string s{"AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"};
+    findRepeatedDnaSequences(s);
 }

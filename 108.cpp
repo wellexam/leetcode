@@ -1,56 +1,39 @@
-#include <algorithm>
-#include <iostream>
-#include <string>
-#include <vector>
+#include "regular_headers.hpp"
 
 using namespace std;
 
-struct TreeNode {
-    int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode() :
-        val(0), left(nullptr), right(nullptr) {
+bool recursive(vector<int> &nums, TreeNode *root, int left, int right) {
+    if (left == right) {
+        return false;
     }
-    TreeNode(int x) :
-        val(x), left(nullptr), right(nullptr) {
+    int mid = left + (right - left) / 2;
+    root->val = nums[mid];
+    root->left = new TreeNode(0);
+    root->right = new TreeNode(0);
+    if (!recursive(nums, root->left, left, mid)) {
+        delete root->left;
+        root->left = nullptr;
     }
-    TreeNode(int x, TreeNode *left, TreeNode *right) :
-        val(x), left(left), right(right) {
+    if (!recursive(nums, root->right, mid + 1, right)) {
+        delete root->right;
+        root->right = nullptr;
     }
-};
-
-void recursive(int first, int last, TreeNode *node, bool left_or_right, vector<int> &nums) {
-    if (first > last)
-        return;
-    if (first == last) {
-        if (left_or_right)
-            node->left = new TreeNode(nums[first]);
-        else
-            node->right = new TreeNode(nums[first]);
-        return;
-    }
-    int cur = (first + last) / 2;
-    if (left_or_right) {
-        node->left = new TreeNode(nums[cur]);
-        recursive(first, cur - 1, node->left, true, nums);
-        recursive(cur + 1, last, node->left, false, nums);
-        return;
-    } else {
-        node->right = new TreeNode(nums[cur]);
-        recursive(first, cur - 1, node->right, true, nums);
-        recursive(cur + 1, last, node->right, false, nums);
-        return;
-    }
+    return true;
 }
 
 TreeNode *sortedArrayToBST(vector<int> &nums) {
-    int len = nums.size();
-    int begin = 0, end = len - 1;
-    int cur = (begin + end) / 2;
-    auto *root = new TreeNode(nums[cur]);
-    recursive(begin, cur - 1, root, true, nums);
-    recursive(cur + 1, end, root, false, nums);
+    int left = 0, right = nums.size(), mid = left + (right - left) / 2;
+    auto root = new TreeNode(nums[mid]);
+    root->left = new TreeNode(0);
+    root->right = new TreeNode(0);
+    if (!recursive(nums, root->left, left, mid)) {
+        delete root->left;
+        root->left = nullptr;
+    }
+    if (!recursive(nums, root->right, mid + 1, right)) {
+        delete root->right;
+        root->right = nullptr;
+    }
     return root;
 }
 

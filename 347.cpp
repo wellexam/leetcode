@@ -9,47 +9,45 @@ using namespace std;
 
 class Solution {
 public:
-    vector<int> topKFrequent(vector<int> &nums, int k) {
-        unordered_map<int, int> bucket;
-        vector<pair<int, int>> heap;
+    bool ksort(vector<pair<int, int>> &nums, int left, int right, int k) {
+        if (left == right) {
+            return false;
+        }
+        int flag = nums[left + (right - left) / 2].second;
+        int i = left, j = right - 1;
+        while (i < j) {
+            while (i < j && nums[i].second > flag) {
+                j--;
+            }
+            while (i < j && nums[j].second >= flag) {
+                i++;
+            }
+            swap(nums[i], nums[j]);
+        }
+        if (i == nums.size() - k) {
+            return true;
+        }
+        if (i < nums.size() - k) {
+            return ksort(nums, i + 1, right, k);
+        } else {
+            return ksort(nums, left, i, k);
+        }
+    }
+    
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int, int> umap;
         for (auto &i : nums) {
-            ++bucket[i];
+            umap[i]++;
         }
-        auto size = bucket.size();
-        auto iter = bucket.begin();
-        int i = 0;
-        while (i < k - 1) {
-            heap.emplace_back(iter->first, iter->second);
-            ++iter;
-            ++i;
+        vector<pair<int, int>> Sort;
+        Sort.reserve(umap.size());
+        for (auto &i : umap) {
+            Sort.emplace_back(i.first, i.second);
         }
-        if (i == k - 1) {
-            heap.emplace_back(iter->first, iter->second);
-            for (int j = k - 1; j > 0; --j) {
-                int father = (j - 1) / 2;
-                if (heap[father].second > heap[j].second) {
-                    swap(heap[father], heap[j]);
-                }
-            }
-            ++iter;
-            ++i;
-        }
-        while (i < size) {
-            if (iter->second > heap[0].second) {
-                heap[0] = {iter->first, iter->second};
-                for (int j = k - 1; j > 0; --j) {
-                    int father = (j - 1) / 2;
-                    if (heap[father].second > heap[j].second) {
-                        swap(heap[father], heap[j]);
-                    }
-                }
-            }
-            ++iter;
-            ++i;
-        }
-        vector<int> ans(k);
-        for (i = 0; i < k; ++i) {
-            ans[i] = heap[i].first;
+        ksort(Sort, 0, Sort.size(), k);
+        vector<int> ans(k, 0);
+        for (int i = 1; i <= k; i++) {
+            ans[i - 1] = Sort[Sort.size() - i].first;
         }
         return ans;
     }

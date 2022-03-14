@@ -7,29 +7,20 @@
 using namespace std;
 
 vector<vector<string>> groupAnagrams(vector<string> &strs) {
-    unordered_map<string, vector<int>> map;
-    int count = 0;
-    for (auto &str : strs) {
-        vector<int> table(26, 0);
-        for (auto c : str) {
-            ++table[c - 'a'];
-        }
-        string temp;
-        temp.reserve(100);
-        for (int i = 0; i < 26; ++i)
-            for (int j = 0; j < table[i]; ++j)
-                temp.push_back(char(i + 'a'));
-        map[temp].push_back(count);
-        ++count;
+    unordered_map<string, list<int>> umap;
+    for (int i = 0; i < strs.size(); i++) {
+        auto temp = strs[i];
+        sort(temp.begin(), temp.end());
+        umap[temp].push_back(i);
     }
     vector<vector<string>> ans;
-    ans.reserve(map.size());
-    for (auto &i : map) {
-        ans.emplace_back();
-        auto t = ans.end() - 1;
-        for (auto s : i.second) {
-            t->push_back(strs[s]);
+    ans.reserve(umap.size());
+    for (auto &i : umap) {
+        vector<string> temp;
+        for (auto j : i.second) {
+            temp.push_back(strs[j]);
         }
+        ans.push_back(move(temp));
     }
     return ans;
 }

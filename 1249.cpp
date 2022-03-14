@@ -8,35 +8,41 @@
 using namespace std;
 
 string minRemoveToMakeValid(string s) {
-    stack<char> stack_a, stack_b;
-    int left_count = 0, right_count = 0;
-    for (auto &i : s) {
-        if (i == '(')
-            ++left_count;
-        else if (i == ')') {
-            if (left_count <= 0)
-                continue;
-            --left_count;
+    int count = 0;
+    int last = 0;
+    vector<bool> shit(s.size(), true);
+    for (int i = 0; i < s.size(); i++) {
+        if (s[i] == '(') {
+            count++;
+            last = i;
+        } else if (s[i] == ')') {
+            if (count) {
+                count--;
+            } else {
+                shit[i] = false;
+            }
         }
-        stack_a.push(i);
     }
-    while (!stack_a.empty()) {
-        char i = stack_a.top();
-        stack_a.pop();
-        if (i == ')')
-            ++right_count;
-        else if (i == '(') {
-            if (right_count <= 0)
-                continue;
-            --right_count;
+    int i = last;
+    while (count--) {
+        for (; i >= 0; i--) {
+            if (s[i] == '(') {
+                shit[i] = false;
+                i--;
+                break;
+            }
         }
-        stack_b.push(i);
     }
     string ans;
-    ans.reserve(stack_b.size());
-    while (!stack_b.empty()) {
-        ans.push_back(stack_b.top());
-        stack_b.pop();
+    for (i = 0; i < s.size(); i++) {
+        if (shit[i]) {
+            ans.push_back(s[i]);
+        }
     }
     return ans;
+}
+
+int main() {
+    string s{"))(("};
+    cout << minRemoveToMakeValid(s);
 }
