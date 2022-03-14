@@ -9,6 +9,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <queue>
 #include <random>
 #include <set>
 #include <stack>

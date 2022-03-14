@@ -3,13 +3,13 @@
 using namespace std;
 
 void ksort(vector<int> &nums, int left, int right) {
-    if (left == right || left == right - 1) {
+    if (left >= right) {
         return;
     }
-    int pivot = left + rand() % (right - left);
+    int pivot = left + rand() % (right - left + 1);
     int flag = nums[pivot];
     swap(nums[left], nums[pivot]);
-    int i = left, j = right - 1;
+    int i = left, j = right;
     while (i < j) {
         while (i < j && nums[j] >= flag) {
             j--;
@@ -20,13 +20,13 @@ void ksort(vector<int> &nums, int left, int right) {
         swap(nums[i], nums[j]);
     }
     swap(nums[i], nums[left]);
-    ksort(nums, i, right);
     ksort(nums, left, i);
+    ksort(nums, i + 1, right);
 }
 
 vector<int> sortArray(vector<int> &nums) {
     srand(time(0));
-    ksort(nums, 0, nums.size());
+    ksort(nums, 0, nums.size() - 1);
     return nums;
 }
 
