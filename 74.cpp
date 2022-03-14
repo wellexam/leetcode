@@ -9,32 +9,51 @@
 using namespace std;
 
 bool searchMatrix(vector<vector<int>> &matrix, int target) {
-    int m = matrix.size(), n = matrix[0].size(), size = m * n;
-    int first = 1, last = size, current = (first + last) >> 1;
-    if (matrix[m - 1][n - 1] < target) {
-        return false;
-    } else if (matrix[m - 1][n - 1] == target) {
-        return true;
-    }
-    while (first <= last) {
-        int x = (current - 1) / n, y = current - x * n - 1;
-        if (matrix[x][y] < target) {
-            if (first != current) {
-                first = current;
-                current = (first + last) >> 1;
-            } else {
-                break;
-            }
-        } else if (matrix[x][y] > target) {
-            if (last != current) {
-                last = current;
-                current = (first + last) >> 1;
-            } else {
-                break;
-            }
+    int left = 0, right = matrix.size(), mid = left + (right - left) / 2;
+    bool find_line = false;
+    while (left < right) {
+        if (mid < matrix.size() - 1 && matrix[mid].front() <= target && matrix[mid + 1].front() > target) {
+            find_line = true;
+            break;
+        }
+        if (mid == matrix.size() - 1 && matrix[mid].front() <= target) {
+            find_line = true;
+            break;
+        }
+        if (matrix[mid].front() < target) {
+            left = mid + 1;
+            mid = left + (right - left) / 2;
+            continue;
         } else {
+            right = mid;
+            mid = left + (right - left) / 2;
+            continue;
+        }
+    }
+    if (!find_line) {
+        return false;
+    }
+    int row = mid;
+    left = 0, right = matrix[0].size(), mid = left + (right - left) / 2;
+    while (left < right) {
+        if (matrix[row][mid] == target) {
             return true;
+        }
+        if (matrix[row][mid] < target) {
+            left = mid + 1;
+            mid = left + (right - left) / 2;
+            continue;
+        } else {
+            right = mid;
+            mid = left + (right - left) / 2;
+            continue;
         }
     }
     return false;
+}
+
+int main() {
+    vector<vector<int>> matrix{{1}, {3}};
+    cout << searchMatrix(matrix, 3);
+    return 0;
 }

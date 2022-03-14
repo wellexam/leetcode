@@ -13,8 +13,10 @@ vector<int> searchRange(vector<int> &nums, int target) {
         return {-1, -1};
     }
     int left = 0, right = nums.size(), mid = left + (right - left) / 2;
+    bool is_find = false;
     while (left < right) {
         if (nums[mid] == target) {
+            is_find = true;
             break;
         }
         if (nums[mid] < target) {
@@ -25,7 +27,7 @@ vector<int> searchRange(vector<int> &nums, int target) {
             mid = left + (right - left) / 2;
         }
     }
-    if (nums[mid] != target) {
+    if (!is_find) {
         return {-1, -1};
     }
     int start = 0, end = 0;
@@ -65,6 +67,7 @@ vector<int> searchRange(vector<int> &nums, int target) {
             }
             i = k + 1;
             k = i + (j - i) / 2;
+            continue;
         }
         if (nums[k] > target) {
             j = k;
@@ -78,7 +81,7 @@ vector<int> searchRange(vector<int> &nums, int target) {
 }
 
 int main() {
-    vector<int> nums{2, 2};
-    auto ans = searchRange(nums, 3);
+    vector<int> nums{0, 0, 0, 0, 1, 1, 1, 2, 3, 3, 3, 3, 3, 4, 4, 4};
+    auto ans = searchRange(nums, 1);
     return 0;
 }
