@@ -3,27 +3,29 @@
 using namespace std;
 
 void nextPermutation(vector<int> &nums) {
-    int size = nums.size();
-    int flag = 0;
-    for (int i = size - 1; i > 0; --i) {
-        if (nums[i] > nums[i - 1]) {
-            flag = i;
-            break;
+    int current = nums.size();
+    current--;
+    while (current > 0) {
+        if (nums[current] <= nums[current - 1]) {
+            --current;
+            continue;
         }
-    }
-    int flag2 = 0;
-    if (flag) {
-        for (int i = size - 1; i >= flag; --i) {
-            if (nums[i] > nums[flag - 1]) {
-                flag2 = i;
-                break;
-            }
+        sort(nums.begin() + current, nums.end());
+        int shit = current;
+        while (nums[shit] <= nums[current - 1]) {
+            shit++;
         }
+        swap(nums[shit], nums[current - 1]);
+        break;
     }
-    if (flag && flag2) {
-        swap(nums[flag2], nums[flag - 1]);
-        sort(nums.begin() + flag, nums.end());
-    } else {
+    if (current == 0) {
         sort(nums.begin(), nums.end());
     }
+    return;
+}
+
+int main() {
+    vector<int> nums{1, 2, 3};
+    nextPermutation(nums);
+    return 0;
 }
