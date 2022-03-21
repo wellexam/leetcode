@@ -3,33 +3,28 @@
 using namespace std;
 
 int jump(vector<int> &nums) {
-    int n = nums.size();
-    if (n <= 2) {
-        return n - 1;
-    }
-    vector<int> reachable(n, -1);
-    reachable[0] = 0;
-    reachable[1] = 0;
-    int current = 2;
-    while (current < n) {
-        int hoops = 10001;
-        for (int i = reachable[current - 1]; i < current; ++i) {
-            if (nums[i] + i >= current) {
-                reachable[current] = i;
-                break;
+    int farthest = 0;
+    int current = 0;
+    int step = 0;
+    while (current < nums.size() - 1) {
+        farthest = nums[current] + current;
+        int temp_far = farthest;
+        for (int i = current + 1; i <= farthest && i < nums.size(); i++) {
+            if (nums[i] + i >= temp_far) {
+                temp_far = nums[i] + i;
+                current = i;
             }
         }
-        ++current;
-    }
-    int hoops = 0;
-    current = n - 1;
-    while (current >= 0) {
-        if (reachable[current] == 0) {
-            ++hoops;
-            break;
+        step++;
+        if (farthest >= nums.size() - 1) {
+            return step;
         }
-        current = reachable[current];
-        ++hoops;
     }
-    return hoops;
+    return step;
+}
+
+int main() {
+    vector<int> nums{2, 3, 1};
+    cout << jump(nums);
+    return 0;
 }
