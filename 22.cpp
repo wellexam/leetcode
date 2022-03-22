@@ -2,57 +2,33 @@
 
 using namespace std;
 
-map<int, vector<string>> str_table;
+vector<vector<string>> table;
 
-void str_generator(int n, int target, string str) {
-    if (!n) {
-        str += ")";
-        str_table[target].push_back(str);
+void get(int n) {
+    if (!table[n].empty()) {
         return;
     }
-    if (n != target) {
-        for (int i = 1; i <= n; ++i) {
-            for (auto &s : str_table[i]) {
-                str_generator(n - i, target, str + s);
+    for (int i = 1; i <= n; i++) {
+        get(i - 1);
+        get(n - i);
+        for (auto &left : table[i - 1]) {
+            for (auto &right : table[n - i]) {
+                table[n].push_back('(' + left + ')' + right);
             }
         }
     }
-    if (n == target) {
-        str_generator(n - 1, target, "(");
-    }
-}
-
-void generator(int n, int target, const string& str) {
-    if (n <= 1) {
-        if (n == 1) {
-            str_table[target].push_back(str + "()");
-        } else {
-            str_table[target].push_back(str);
-        }
-        return;
-    } else {
-        for (int i = 1; i <= n && i < target; ++i) {
-            for (auto &s : str_table[i]) {
-                generator(n - i, target, str + s);
-            }
-        }
-    }
+    return;
 }
 
 vector<string> generateParenthesis(int n) {
-    if (n == 1) {
-        return {"()"};
-    }
-    str_table[1].push_back({"()"});
-    for (int i = 2; i <= n; ++i) {
-        str_generator(i, i, "");
-    }
-    generator(n, n, "");
-    return str_table[n];
+    table = vector<vector<string>>(n + 1);
+    table[0].push_back("");
+    get(n);
+    return table[n];
 }
 
 int main() {
-    for (auto &i : generateParenthesis(1)) {
+    for (auto &i : generateParenthesis(5)) {
         cout << i << endl;
     }
 }
