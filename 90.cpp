@@ -2,38 +2,45 @@
 
 using namespace std;
 
-typedef unordered_map<int, int>::const_iterator iter;
-
-void dfs(iter current, iter end, vector<int> &set, vector<vector<int>> &ans) {
-    if (current == end) {
-        ans.emplace_back(set);
+void enums(unordered_map<int, int> &umap, unordered_map<int, int>::iterator iter, vector<vector<int>> &ans, vector<int> &path) {
+    if (iter == umap.end()) {
+        ans.push_back(path);
         return;
     }
-    auto temp = current;
-    ++temp;
-    dfs(temp, end, set, ans);
-    int num = current->first;
-    int count = current->second;
-    for (int i = 0; i < count; ++i) {
-        set.emplace_back(num);
-        dfs(temp, end, set, ans);
+    int count = iter->second;
+    auto temp = iter;
+    temp++;
+    enums(umap, temp, ans, path);
+    cout << iter->first << " " << iter->second << endl;
+    while (iter->second > 0) {
+        iter->second--;
+        path.push_back(iter->first);
+        enums(umap, temp, ans, path);
+        cout << iter->first << " " << iter->second << endl;
     }
-    for (int i = 0; i < count; ++i) {
-        set.pop_back();
+    cout << iter->first << " " << iter->second << endl;
+    while (iter->second < count) {
+        iter->second++;
+        path.pop_back();
+        cout << iter->first << " " << iter->second << endl;
     }
     return;
 }
 
 vector<vector<int>> subsetsWithDup(vector<int> &nums) {
-    int n = nums.size();
-    unordered_map<int, int> map;
-    for (auto &i : nums) {
-        ++map[i];
+    unordered_map<int, int> umap;
+    for (auto i : nums) {
+        umap[i]++;
     }
-    auto begin = map.cbegin();
-    auto end = map.cend();
-    vector<int> set;
     vector<vector<int>> ans;
-    dfs(begin, end, set, ans);
+    vector<int> path;
+    path.reserve(nums.size());
+    enums(umap, umap.begin(), ans, path);
     return ans;
+}
+
+int main() {
+    vector<int> nums{1, 2, 2};
+    auto ans = subsetsWithDup(nums);
+    return 0;
 }

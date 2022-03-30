@@ -2,25 +2,25 @@
 
 using namespace std;
 
-int recursive(int begin, int end, vector<int> &map) {
-    if (end <= begin) {
-        return 1;
+int get(vector<int> &ans, int n) {
+    if (ans[n] != -1) {
+        return ans[n];
     }
-    if (map[end - begin]) {
-        return map[end - begin];
+    ans[n] = 0;
+    for (int i = 1; i <= n; i++) {
+        ans[n] += get(ans, i - 1) * get(ans, n - i);
     }
-    auto count = 0;
-    for (int i = begin; i <= end; ++i) {
-        int temp = 1;
-        temp *= recursive(begin, i - 1, map);
-        temp *= recursive(i + 1, end, map);
-        count += temp;
-    }
-    map[end - begin] = count;
-    return count;
+    return ans[n];
 }
 
 int numTrees(int n) {
-    vector<int> map(n, 0);
-    return recursive(1, n, map);
+    vector<int> ans(n + 1, -1);
+    ans[0] = 1;
+    ans[1] = 1;
+    return get(ans, n);
+}
+
+int main() {
+    cout << numTrees(3);
+    return 0;
 }
