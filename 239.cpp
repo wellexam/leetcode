@@ -3,42 +3,41 @@
 using namespace std;
 
 vector<int> maxSlidingWindow(vector<int> &nums, int k) {
-    deque<pair<int, int>> que;
-    que.emplace_back(nums[0], 0);
-    for (int i = 1; i < k; ++i) {
-        if (nums[i] > que.front().first) {
-            que.clear();
-            que.emplace_back(nums[i], i);
-        } else {
-            while (nums[i] > que.back().first) {
-                que.pop_back();
-            }
-            que.emplace_back(nums[i], i);
+    int current = 1;
+    deque<int> que;
+    vector<int> ans;
+    ans.reserve(nums.size() - k + 1);
+    que.push_back(0);
+    while (current < k) {
+        while (!que.empty() && nums[current] > nums[que.back()]) {
+            que.pop_back();
         }
-    }
-    vector<int> res;
-    res.reserve(nums.size());
-    res.push_back(que.front().first);
-    for (int i = k; i < nums.size(); ++i) {
-        if (que.front().second <= i - k) {
+        que.push_back(current);
+        while (!que.empty() && que.front() <= current - k) {
             que.pop_front();
         }
-        if (nums[i] > que.front().first) {
-            que.clear();
-            que.emplace_back(nums[i], i);
-        } else {
-            while (nums[i] > que.back().first) {
-                que.pop_back();
-            }
-            que.emplace_back(nums[i], i);
-        }
-        res.push_back(que.front().first);
+        current++;
     }
-    return res;
+    ans.push_back(nums[que.front()]);
+    while (current < nums.size()) {
+        while (!que.empty() && nums[current] > nums[que.back()]) {
+            que.pop_back();
+        }
+        que.push_back(current);
+        while (!que.empty() && que.front() <= current - k) {
+            que.pop_front();
+        }
+        ans.push_back(nums[que.front()]);
+        current++;
+    }
+    return ans;
 }
 
 int main() {
     vector<int> nums{9, 10, 9, -7, -4, -8, 2, -6};
     auto res = maxSlidingWindow(nums, 5);
+    for (auto i : res) {
+        cout << i << " ";
+    }
     return 0;
 }
