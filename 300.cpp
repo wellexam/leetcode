@@ -3,41 +3,56 @@
 using namespace std;
 
 int lengthOfLIS(vector<int> &nums) {
-    vector<int> tails;
-    tails.reserve(nums.size());
-    tails.push_back(nums[0]);
+    vector<int> tail(nums.size() + 1);
+    int currentLen = 1;
+    tail[1] = nums[0];
     for (int i = 1; i < nums.size(); i++) {
-        if (tails.back() < nums[i]) {
-            tails.push_back(nums[i]);
-            continue;
-        }
-        int length = tails.size();
-        int left = 0, right = length, mid = 0;
+        int num = nums[i];
+        int left = 1, right = currentLen, mid = left + ((right - left) >> 1);
         while (left <= right) {
-            mid = left + (right - left) / 2;
-            if (tails[mid] == nums[i]) {
-                break;
-            }
-            if (mid > 0 && tails[mid - 1] < nums[i] && tails[mid] > nums[i]) {
-                tails[mid] = nums[i];
-                break;
-            }
-            if (mid == 0 && tails[mid] > nums[i]) {
-                tails[mid] = nums[i];
-                break;
-            }
-            if (tails[mid] > nums[i]) {
-                right = mid - 1;
+            mid = left + ((right - left) >> 1);
+            if (num > tail[mid]) {
+                if (mid < currentLen) {
+                    if (tail[mid + 1] > num) {
+                        tail[mid + 1] = num;
+                        break;
+                    } else if (tail[mid + 1] < num) {
+                        left = mid + 1;
+                        continue;
+                    } else {
+                        break;
+                    }
+                } else {
+                    currentLen++;
+                    tail[currentLen] = num;
+                    break;
+                }
+            } else if (num < tail[mid]) {
+                if (mid > 1) {
+                    if (tail[mid - 1] < num) {
+                        tail[mid] = num;
+                        break;
+                    } else if (tail[mid - 1] > num) {
+                        right = mid;
+                        continue;
+                    } else {
+                        break;
+                    }
+                } else {
+                    tail[mid] = num;
+                    break;
+                }
             } else {
-                left = mid + 1;
+                break;
             }
         }
     }
-    return tails.size();
+    return currentLen;
 }
 
 int main() {
-    vector<int> nums{1, 3, 6, 7, 9, 4, 10, 5, 6};
+    vector<int> nums{10, 9, 2, 5, 3, 7, 101, 18};
     auto ans = lengthOfLIS(nums);
+    cout << ans << endl;
     return 0;
 }

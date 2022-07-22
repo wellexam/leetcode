@@ -1,38 +1,23 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <string>
-#include <unordered_map>
-#include <list>
-#include <forward_list>
-#include <deque>
+#include "regular_headers.hpp"
 
 using namespace std;
 
 int lengthOfLongestSubstring(string s) {
-    if (s.empty()) {
-        return 0;
-    }
-    int length = 0;
-    unordered_map<char, bool> map;
-    deque<char> que;
-    for (auto &i : s) {
-        auto pos = map.find(i);
-        if (pos != map.end() && pos->second) {
-            length = max(length, int(que.size()));
-            auto front = que.front();
-            while (front != i) {
-                map[front] = false;
-                que.pop_front();
-                front = que.front();
-            }
-            que.pop_front();
-            que.emplace_back(i);
+    int ans = 0;
+    int left = 0, right = 0;
+    unordered_map<char, bool> umap;
+    char current = s[0];
+    while (right < s.size()) {
+        current = s[right];
+        if (umap[current]) {
+            ans = max(ans, right - left);
+            umap[s[left]] = false;
+            ++left;
         } else {
-            map[i] = true;
-            que.emplace_back(i);
+            umap[current] = true;
+            ans = max(ans, right - left + 1);
+            ++right;
         }
     }
-    length = max(length, int(que.size()));
-    return length;
+    return ans;
 }

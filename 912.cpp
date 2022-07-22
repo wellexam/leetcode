@@ -2,31 +2,29 @@
 
 using namespace std;
 
-void ksort(vector<int> &nums, int left, int right) {
+void ksort(int left, int right, vector<int> &nums) {
     if (left >= right) {
         return;
     }
-    int pivot = left + rand() % (right - left + 1);
-    int flag = nums[pivot];
-    swap(nums[left], nums[pivot]);
-    int i = left, j = right;
+    int i = left, j = right, flag = nums[i + ((j - i) >> 1)];
+    swap(nums[i + ((j - i) >> 1)], nums[i]);
     while (i < j) {
-        while (i < j && nums[j] >= flag) {
+        while (nums[j] >= flag && i < j) {
             j--;
         }
-        while (i < j && nums[i] <= flag) {
+        while (nums[i] <= flag && i < j) {
             i++;
         }
         swap(nums[i], nums[j]);
     }
     swap(nums[i], nums[left]);
-    ksort(nums, left, i);
-    ksort(nums, i + 1, right);
+    ksort(left, i, nums);
+    ksort(i + 1, right, nums);
+    return;
 }
 
 vector<int> sortArray(vector<int> &nums) {
-    srand(time(0));
-    ksort(nums, 0, nums.size() - 1);
+    ksort(0, nums.size() - 1, nums);
     return nums;
 }
 
