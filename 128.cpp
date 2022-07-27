@@ -2,22 +2,28 @@
 
 using namespace std;
 
+unordered_map<int, int> umap;
+
+int find(int x) {
+    if (umap[x] == x) {
+        return x;
+    } else {
+        return umap[x] = find(umap[x]);
+    }
+}
+
 int longestConsecutive(vector<int> &nums) {
-    unordered_set<int> uset;
-    for (auto i : nums) {
-        uset.insert(i);
+    for (int i = 0; i < nums.size(); i++) {
+        umap[nums[i]] = nums[i];
+    }
+    for (auto &num : umap) {
+        if (umap.count(num.second - 1)) {
+            num.second--;
+        }
     }
     int ans = 0;
-    for (auto &num : uset) {
-        auto count = 0;
-        if (!uset.count(num - 1)) {
-            auto current = num;
-            while (uset.count(current)) {
-                count++;
-                current++;
-            }
-            ans = max(count, ans);
-        }
+    for (auto &num : umap) {
+        ans = max(num.first - find(num.second) + 1, ans);
     }
     return ans;
 }

@@ -1,107 +1,74 @@
-#include <algorithm>
-#include <cmath>
-#include <deque>
-#include <iostream>
-#include <string>
-#include <unordered_map>
-#include <vector>
+#include "regular_headers.hpp"
 
 using namespace std;
 
-int find_father(int son, vector<int> &father) {
-    if (son != father[son]) { father[son] = find_father(father[son], father); }
-    return father[son];
+int mask = 0x3FF;
+
+vector<vector<int>> fa;
+
+int find(int pos) {
+    int x = pos >> 10;
+    int y = pos & mask;
+    if (fa[x][y] == pos) {
+        return pos;
+    } else {
+        return fa[x][y] = find(fa[x][y]);
+    }
 }
 
-int merge(int son_1, int son_2, vector<int> &father) {
-    auto die = min(find_father(son_1, father), find_father(son_2, father));
-    // auto die = min(son_1, son_2);
-    father[son_1] = die;
-    father[son_2] = die;
-    return die;
+void merge(int a, int b) {
+    int roota = find(a);
+    int rootb = find(b);
+    int xa = roota >> 10, ya = roota & mask;
+    int xb = rootb >> 10, yb = rootb & mask;
+    if (roota != rootb) {
+        fa[xa][ya] = rootb;
+    }
 }
 
 int numIslands(vector<vector<char>> &grid) {
     int m = grid.size(), n = grid[0].size();
-    int size = m * n;
-    unordered_map<int, bool> count;
-    vector<int> father(size, -1);
-    unordered_map<int, vector<int>> map;
-    for (int pos = 0; pos < size; ++pos) {
-        int x = pos / n;
-        int y = pos % n;
-        if (grid[x][y] == '0') { continue; }
-        if (father[pos] == -1) {
-            auto find_father = 0;
-            auto die_1 = -1, die_2 = -1;
-            if (y - 1 >= 0 && father[pos - 1] != -1) {
-                die_1 = father[pos - 1];
-                ++find_father;
-            }
-            if (x - 1 >= 0 && father[pos - n] != -1) {
-                die_2 = father[pos - n];
-                ++find_father;
-            }
-            if (!find_father) {
-                father[pos] = pos;
+    fa = vector<vector<int>>(grid.size(), vector<int>(grid[0].size()));
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[0].size(); j++) {
+            if (grid[i][j] == '1') {
+                fa[i][j] = (i << 10) + j;
             } else {
-                if (find_father == 1) {
-                    father[pos] = max(die_1, die_2);
-                } else {
-                    father[pos] = merge(die_1, die_2, father);
+                fa[i][j] = -1;
+            }
+        }
+    }
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[0].size(); j++) {
+            if (fa[i][j] != -1) {
+                if (i > 0 && fa[i - 1][j] != -1) {
+                    merge(fa[i - 1][j], fa[i][j]);
+                }
+                if (j > 0 && fa[i][j - 1] != -1) {
+                    merge(fa[i][j - 1], fa[i][j]);
+                }
+                if (i < m - 1 && fa[i + 1][j] != -1) {
+                    merge(fa[i + 1][j], fa[i][j]);
+                }
+                if (j < n - 1 && fa[i][j + 1] != -1) {
+                    merge(fa[i][j + 1], fa[i][j]);
                 }
             }
         }
     }
-    for (int pos = 0; pos < size; ++pos) {
-        if (father[pos] >= 0) {
-            father[pos] = find_father(pos, father);
-            count[father[pos]] = true;
+    unordered_set<int> uset;
+    for (int i = 0; i < grid.size(); i++) {
+        for (int j = 0; j < grid[0].size(); j++) {
+            if (fa[i][j] != -1) {
+                uset.insert(find(fa[i][j]));
+            }
         }
     }
-    // for (int pos = size - 1; pos >= 0; --pos) {
-    //    if (father[pos] >= 0)
-    //    {
-    //        father[pos] = find_father(pos, father);
-    //        count[father[pos]] = true;
-    //    }
-    //}
-    // int temp = 0;
-    // vector<pair<int, int>> shit;
-    // for (auto &i: count)
-    //{
-    //    ++temp;
-    //    std::cout << temp << " : " << i.first / n << ", " << i.first % n << " " << i.first << endl;
-    //    shit.emplace_back(i.first / n, i.first % n);
-    //}
-    // sort(shit.begin(), shit.end());
-    // for (auto &i : shit) {
-    //    cout << i.first << " " << i.second << endl;
-    //}
-    return count.size();
+    return uset.size();
 }
 
 int main() {
-    vector<vector<char>> grid{{'0', '0', '1', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '0', '1', '0', '0'},
-                              {'0', '1', '0', '0', '0', '0', '1', '1', '0', '0', '0', '1', '0', '0', '1', '1', '0', '0', '0', '0'},
-                              {'1', '0', '1', '1', '0', '0', '0', '0', '0', '1', '0', '0', '0', '1', '0', '1', '1', '1', '1', '0'},
-                              {'1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '1', '1', '1', '1', '1'},
-                              {'0', '0', '0', '0', '0', '1', '0', '0', '0', '1', '1', '1', '1', '0', '1', '0', '0', '0', '0', '0'},
-                              {'0', '1', '1', '1', '0', '0', '0', '1', '0', '1', '0', '1', '0', '0', '1', '0', '1', '1', '0', '0'},
-                              {'0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '0', '0', '1', '1', '0', '0', '0', '0', '0'},
-                              {'0', '1', '1', '0', '0', '0', '0', '0', '1', '0', '1', '1', '0', '1', '1', '0', '0', '1', '0', '0'},
-                              {'0', '0', '1', '1', '1', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '0', '1'},
-                              {'1', '1', '0', '0', '0', '1', '0', '1', '0', '0', '0', '1', '1', '0', '0', '1', '0', '1', '1', '0'},
-                              {'0', '0', '0', '0', '0', '0', '1', '0', '1', '1', '0', '0', '1', '0', '1', '1', '1', '1', '0', '1'},
-                              {'0', '0', '1', '1', '0', '0', '1', '0', '1', '0', '0', '1', '0', '0', '1', '0', '0', '1', '0', '1'},
-                              {'0', '1', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '1', '1', '1', '0', '0', '0'},
-                              {'0', '0', '1', '0', '1', '0', '0', '1', '1', '0', '1', '1', '1', '0', '0', '1', '1', '0', '0', '1'},
-                              {'1', '0', '1', '0', '1', '0', '1', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '1', '1', '0'},
-                              {'1', '0', '1', '1', '1', '0', '1', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '1', '1'},
-                              {'1', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '1', '1'},
-                              {'0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '1', '0', '1', '0', '1', '1', '0', '1', '0', '1'},
-                              {'1', '0', '0', '1', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '1', '1', '1', '1'},
-                              {'0', '0', '0', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '1', '0', '0'}};
+    vector<vector<char>> grid{{'1', '1', '1'}, {'0', '1', '0'}, {'1', '1', '1'}};
     std::cout << numIslands(grid);
     return 0;
 }
