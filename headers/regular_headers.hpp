@@ -19,5 +19,6 @@
 #include <unordered_set>
 #include <vector>
 #include <cassert>
+#include <bitset>
 
 using namespace std;

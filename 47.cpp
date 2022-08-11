@@ -1,39 +1,28 @@
 #include "regular_headers.hpp"
 
-using namespace std;
+vector<int> ans;
+vector<vector<int>> res;
 
-void dfs(int current, vector<int> &set, vector<pair<int, int>> &digits, vector<vector<int>> &ans) {
-    set.emplace_back(digits[current].first);
-    --digits[current].second;
-    auto is_end = true;
-    for (int i = 0; i < digits.size(); ++i) {
-        if (digits[i].second) {
-            dfs(i, set, digits, ans);
-            is_end = false;
+void recursive(map<int, int> &nums, int i) {
+    if (i == ans.size()) {
+        res.push_back(ans);
+    }
+    for (auto &p : nums) {
+        if (p.second) {
+            ans[i] = p.first;
+            p.second--;
+            recursive(nums, i + 1);
+            p.second++;
         }
     }
-    ++digits[current].second;
-    if (is_end) {
-        ans.emplace_back(set);
-    }
-    set.pop_back();
-    return;
 }
 
 vector<vector<int>> permuteUnique(vector<int> &nums) {
-    unordered_map<int, int> map;
-    for (auto &i : nums) {
-        ++map[i];
+    map<int, int> Map;
+    ans = vector<int>(nums.size());
+    for (auto i : nums) {
+        Map[i]++;
     }
-    int n = map.size();
-    vector<pair<int, int>> digits;
-    for (auto &i : map) {
-        digits.emplace_back(i.first, i.second);
-    }
-    vector<int> set;
-    vector<vector<int>> ans;
-    for (int i = 0; i < n; ++i) {
-        dfs(i, set, digits, ans);
-    }
-        return ans;
+    recursive(Map, 0);
+    return res;
 }

@@ -1,45 +1,36 @@
 #include "regular_headers.hpp"
 
-using namespace std;
+vector<vector<int>> res;
+vector<int> ans;
 
-void dfs(int sum, int index, int target, vector<pair<int, int>> &shit, vector<int> &set, vector<vector<int>> &ans) {
-    if (index == shit.size()) {
+void recursive(map<int, int> &candidates, int target, int sum, map<int, int>::iterator iter) {
+    if (sum == target) {
+        res.push_back(ans);
         return;
     }
-    dfs(sum, index + 1, target, shit, set, ans);
-    auto count = 0;
-    auto current = shit[index].first;
-    while (count < shit[index].second) {
-        ++count;
-        set.emplace_back(current);
-        sum += current;
-        if (sum == target) {
-            ans.emplace_back(set);
-            break;
-        } else if (sum > target) {
-            break;
-        } else {
-            dfs(sum, index + 1, target, shit, set, ans);
-        }
+    if (iter == candidates.end()) {
+        return;
     }
-    while (count > 0) {
-        set.pop_back();
-        --count;
+    recursive(candidates, target, sum, ++iter);
+    --iter;
+    int j;
+    for (j = 0; iter->second && iter->first + sum <= target; j++) {
+        sum += iter->first;
+        iter->second--;
+        ans.emplace_back(iter->first);
+        recursive(candidates, target, sum, ++iter);
+        --iter;
     }
+    iter->second += j;
+    ans.erase(ans.end() - j, ans.end());
     return;
 }
 
 vector<vector<int>> combinationSum2(vector<int> &candidates, int target) {
-    vector<int> set;
-    vector<vector<int>> ans;
-    unordered_map<int, int> map;
-    for (auto &i : candidates) {
-        ++map[i];
+    map<int, int> Map;
+    for (auto i : candidates) {
+        Map[i]++;
     }
-    vector<pair<int, int>> shit;
-    for (auto &i : map) {
-        shit.emplace_back(i.first, i.second);
-    }
-    dfs(0, 0, target, shit, set, ans);
-    return ans;
+    recursive(Map, target, 0, Map.begin());
+    return res;
 }

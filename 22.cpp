@@ -1,30 +1,38 @@
 #include "regular_headers.hpp"
 
-using namespace std;
+vector<vector<string>> cache;
 
-vector<vector<string>> table;
-
-void get(int n) {
-    if (!table[n].empty()) {
-        return;
+vector<string> &generate(int i) {
+    if (!cache[i].empty()) {
+        return cache[i];
     }
-    for (int i = 1; i <= n; i++) {
-        get(i - 1);
-        get(n - i);
-        for (auto &left : table[i - 1]) {
-            for (auto &right : table[n - i]) {
-                table[n].push_back('(' + left + ')' + right);
+    for (int x = 0; x < i; x++) {
+        auto a = generate(x);
+        auto b = generate(i - 1 - x);
+        vector<string> temp_ans;
+        string temp;
+        temp.push_back('(');
+        for (auto &str : a) {
+            temp += str;
+            temp.push_back(')');
+            temp_ans.push_back(temp);
+            temp.resize(temp.size() - str.size() - 1);
+        }
+        for (auto &str : b) {
+            for (auto ans : temp_ans) {
+                ans += str;
+                cache[i].push_back(ans);
             }
         }
     }
-    return;
+    return cache[i];
 }
 
 vector<string> generateParenthesis(int n) {
-    table = vector<vector<string>>(n + 1);
-    table[0].push_back("");
-    get(n);
-    return table[n];
+    cache = vector<vector<string>>(n + 1);
+    cache[0] = {""};
+    generate(n);
+    return cache.back();
 }
 
 int main() {

@@ -1,43 +1,28 @@
 #include "regular_headers.hpp"
 
-using namespace std;
+vector<vector<int>> res;
+vector<int> ans;
 
-void dfs(int sum, int index, int target, vector<int> &candidates, vector<int> &set, vector<vector<int>> &ans) {
-    if (index == candidates.size()) {
-        return;
-    }
-    auto current = candidates[index];
+void recursive(vector<int> &candidates, int i, int sum, int target) {
     if (sum == target) {
-        ans.emplace_back(set);
+        res.push_back(ans);
         return;
     }
-    dfs(sum, index + 1, target, candidates, set, ans);
-    auto count = 0;
-    while (sum <= target) {
-        sum += current;
-        if (sum > target) {
-            break;
-        } else if (sum == target) {
-            set.emplace_back(current);
-            ++count;
-            ans.emplace_back(set);
-            break;
-        } else {
-            set.emplace_back(current);
-            ++count;
-            dfs(sum, index + 1, target, candidates, set, ans);
-        }
+    if (i == candidates.size())
+        return;
+    recursive(candidates, i + 1, sum, target);
+    int j;
+    for (j = 0; sum + candidates[i] <= target; j++) {
+        sum += candidates[i];
+        ans.emplace_back(candidates[i]);
+        recursive(candidates, i + 1, sum, target);
     }
-    while (count > 0) {
-        set.pop_back();
-        --count;
-    }
+    if (j)
+        ans.erase(ans.end() - j, ans.end());
     return;
 }
 
 vector<vector<int>> combinationSum(vector<int> &candidates, int target) {
-    vector<int> set;
-    vector<vector<int>> ans;
-    dfs(0, 0, target, candidates, set, ans);
-    return ans;
+    recursive(candidates, 0, 0, target);
+    return res;
 }
